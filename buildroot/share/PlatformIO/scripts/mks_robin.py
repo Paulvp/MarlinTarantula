@@ -1,7 +1,9 @@
 Import("env")
 
 # Relocate firmware from 0x08000000 to 0x08007000
-env['CPPDEFINES'].remove(("VECT_TAB_ADDR", 134217728))
+for define in env['CPPDEFINES']:
+    if define[0] == "VECT_TAB_ADDR":
+        env['CPPDEFINES'].remove(define)
 env['CPPDEFINES'].append(("VECT_TAB_ADDR", "0x08007000"))
 env.Replace(LDSCRIPT_PATH="buildroot/share/PlatformIO/ldscripts/mks_robin.ld")
 
@@ -25,4 +27,4 @@ def encrypt(source, target, env):
     finally:
         firmware.close()
         robin.close()
-env.AddPostAction("$BUILD_DIR/${PROGNAME}.bin", encrypt);
+env.AddPostAction('"$BUILD_DIR/${PROGNAME}.bin"', encrypt);
